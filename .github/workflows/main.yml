@@ -7,11 +7,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Create local changes
-      env:
-        branch: ${GITHUB_REF##*/}
+      shell: bash
       run: |
-        echo $branch
-        sed -i 's/version.*/$branch/g' test.yaml
+        echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+        sed -i 's/version.*/$BRANCH_NAME/g' test.yaml
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
@@ -21,4 +20,4 @@ jobs:
       uses: ad-m/github-push-action@v0.5.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${GITHUB_REF##*/}
+        branch: ${GITHUB_REF}
