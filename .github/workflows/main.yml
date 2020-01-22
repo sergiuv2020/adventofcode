@@ -14,7 +14,7 @@ jobs:
         ref: ${{ steps.extract_branch.outputs.branch }}
     - name: Create local changes
       run: |
-        sed -i 's@version.*@${{ steps.extract_branch.outputs.branch }}@g' test.yaml
+        sed -i 's@version.*@version: ${{ steps.extract_branch.outputs.branch }}@g' test.yaml
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
