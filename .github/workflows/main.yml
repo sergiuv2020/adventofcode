@@ -7,9 +7,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Create local changes
+      env:
+        branch: ${GITHUB_REF##*/}
       run: |
-        branch=${GITHUB_REF##*/}
-        sed -i s,version.*,version: "$branch",g test.yaml
+        echo $branch
+        sed -i 's/version.*/$branch/g' test.yaml
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
