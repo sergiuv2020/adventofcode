@@ -10,7 +10,8 @@ jobs:
       shell: bash
       run: |
         echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
-        sed -i 's/version.*/$BRANCH_NAME/g' test.yaml
+        echo $BRANCH_NAME
+        sed -i 's/version.*/version: "$BRANCH_NAME"/g' test.yaml
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
@@ -20,4 +21,4 @@ jobs:
       uses: ad-m/github-push-action@v0.5.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${GITHUB_REF}
+        branch: ${{GITHUB_REF}}
