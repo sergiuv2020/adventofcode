@@ -5,13 +5,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Create local changes
+    - name: Extract branch name
       shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+    - uses: actions/checkout@v2
+      with: 
+        ref: ${{ steps.extract_branch.outputs.branch }}
+    - uses: rlespinasse/github-slug-action@master
+    - name: Create local changes
       run: |
-        echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
-        echo $BRANCH_NAME
-        sed -i 's/version.*/version: "$BRANCH_NAME"/g' test.yaml
+        echo ${{ steps.extract_branch.outputs.branch }}
+        sed -i 's@version.*@'"${{ steps.extract_branch.outputs.branch }}"'@g' test.yaml
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
@@ -20,4 +25,4 @@ jobs:
     - name: Push changes
       uses: ad-m/github-push-action@v0.5.0
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ steps.extract_branch.outputs.branch }}
