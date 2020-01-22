@@ -5,16 +5,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: Create local changes
       run: |
-        sed 's/version:.*/version: ${{ GITHUB_REF }}/g'
+        sed 's/version:.*/version: $GITHUB_REF/g'
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git commit -m "Add changes" -a
     - name: Push changes
-      uses: ad-m/github-push-action@master
+      uses: ad-m/github-push-action@$GITHUB_REF
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
